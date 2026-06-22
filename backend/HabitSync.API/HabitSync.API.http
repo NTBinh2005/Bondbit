@@ -1,0 +1,6 @@
+@HabitSync.API_HostAddress = http://localhost:5189
+
+GET {{HabitSync.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

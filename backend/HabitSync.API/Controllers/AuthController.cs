@@ -1,6 +1,4 @@
 ﻿using HabitSync.API.Services;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using LoginRequest = HabitSync.API.DTOs.LoginRequest;
 using RegisterRequest = HabitSync.API.DTOs.RegisterRequest;
@@ -9,7 +7,7 @@ namespace HabitSync.API.Controllers;
 
 [ApiController]
 [Route("api/auth")]
-public class AuthController
+public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
     public AuthController(IAuthService authService) => _authService = authService;
