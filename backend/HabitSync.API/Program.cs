@@ -1,6 +1,7 @@
 using System.Text;
 using HabitSync.API.config;
 using HabitSync.API.Data;
+using HabitSync.API.Hubs;
 using HabitSync.API.Services;
 using Hangfire;
 using Hangfire.PostgreSql;
@@ -43,6 +44,9 @@ builder.Services.AddHangfireServer();
 
 builder.Services.AddScoped<IPartnershipService, PartnershipService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddSignalR();
+builder.Services.AddScoped<IChatService, ChatService>();
+
 builder.Services.AddControllers();
 
 builder.Services.AddOpenApi(options =>
@@ -67,5 +71,8 @@ RecurringJob.AddOrUpdate<IPartnershipService>(
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapHub<ChatHub>("/hubs/chat");
+
 app.MapControllers();
 app.Run();

@@ -14,6 +14,7 @@ public class AppDbContext : DbContext
     public DbSet<Partnership> Partnerships => Set<Partnership>();
     public DbSet<Message> Messages => Set<Message>();
     public DbSet<Conversation>  Conversations => Set<Conversation>();
+    public DbSet<UserPushToken> UserPushTokens => Set<UserPushToken>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -85,5 +86,16 @@ public class AppDbContext : DbContext
             .WithMany()
             .HasForeignKey(m => m.SenderId)
             .OnDelete(DeleteBehavior.Restrict);
+        
+        // user push token
+        modelBuilder.Entity<UserPushToken>()
+            .HasOne(t => t.User)
+            .WithMany()
+            .HasForeignKey(t => t.UserId);
+
+// Mỗi user chỉ lưu một token — upsert khi đổi thiết bị
+        modelBuilder.Entity<UserPushToken>()
+            .HasIndex(t => t.UserId)
+            .IsUnique();
     }
 }

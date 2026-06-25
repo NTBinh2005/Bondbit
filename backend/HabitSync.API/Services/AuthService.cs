@@ -108,6 +108,7 @@ public class AuthService : IAuthService
             new JwtSecurityTokenHandler().WriteToken(accessToken),
             refreshToken.Token,
             user.DisplayName,
-            user.AvatarUrl);
+            user.AvatarUrl,
+            user.Id);
     }
 }
