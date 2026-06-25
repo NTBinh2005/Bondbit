@@ -11,6 +11,9 @@ public class AppDbContext : DbContext
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     public DbSet<Habit> Habits => Set<Habit>();
     public DbSet<HabitLog> HabitLogs => Set<HabitLog>();
+    public DbSet<Partnership> Partnerships => Set<Partnership>();
+    public DbSet<Message> Messages => Set<Message>();
+    public DbSet<Conversation>  Conversations => Set<Conversation>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -42,5 +45,45 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<HabitLog>()
             .HasIndex(l => new { l.UserId, l.HabitId, l.Date })
             .IsUnique();
+        
+        // partnership
+        modelBuilder.Entity<Partnership>()
+            .HasOne(p => p.Requester)
+            .WithMany()
+            .HasForeignKey(p => p.RequesterId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        modelBuilder.Entity<Partnership>()
+            .HasOne(p => p.Receiver)
+            .WithMany()
+            .HasForeignKey(p => p.ReceiverId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Partnership>()
+            .HasOne(p => p.Habit)
+            .WithMany()
+            .HasForeignKey(p => p.HabitId);
+        
+        modelBuilder.Entity<Partnership>()
+            .HasIndex(p => new { p.RequesterId, p.ReceiverId, p.HabitId})
+            .IsUnique();
+        
+        // conservation
+        modelBuilder.Entity<Conversation>()
+            .HasOne(c => c.Partnership)
+            .WithOne(p => p.Conversation)
+            .HasForeignKey<Conversation>(c => c.PartnershipId);
+        
+        // message
+        modelBuilder.Entity<Message>()
+            .HasOne(m => m.Conversation)
+            .WithMany(c => c.Messages)
+            .HasForeignKey(m => m.ConversationId);
+        
+        modelBuilder.Entity<Message>()
+            .HasOne(m => m.Sender)
+            .WithMany()
+            .HasForeignKey(m => m.SenderId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

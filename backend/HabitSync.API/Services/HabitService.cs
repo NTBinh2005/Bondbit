@@ -105,6 +105,25 @@ public class HabitService : IHabitService
         var (newStreak, _)  = await CalculateSteakAsync(habit.Id, habit.UserId);
         return new CheckInResponse(log.Id, today, newStreak);
     }
+
+    public async Task<List<LogResponse>> GetLogsAsync(long habitId, long userId, int days)
+    {
+        var exists = await _db.Habits
+            .AnyAsync(h => h.Id == habitId && h.UserId == userId);
+
+        if (!exists)
+            throw new Exception("Habit not found");
+
+        var from = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-days));
+
+        var logs = await _db.HabitLogs
+            .Where(l => l.HabitId == habitId && l.UserId == userId && l.Date >= from)
+            .OrderBy(l => l.Date)
+            .Select(l => new LogResponse(l.Date.ToString("yyyy-MM-dd"), l.IsCompleted))
+            .ToListAsync();
+
+        return logs;
+    }
     
     // steak logic
     private async Task<(int streak, DateOnly? lastCheckIn)> CalculateSteakAsync(long habitId, long userId)

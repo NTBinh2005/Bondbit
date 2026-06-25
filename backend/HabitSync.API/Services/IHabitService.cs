@@ -10,5 +10,6 @@ public interface IHabitService
     Task<HabitResponse> UpdateAsync(long id, UpdateHabitRequest request, long userId);
     Task DeleteAsync(long id, long userId);
     Task<CheckInResponse> CheckInAsync(long habitId, long userId);
+    Task<List<LogResponse>> GetLogsAsync(long habitId, long userId, int days);
 
 }

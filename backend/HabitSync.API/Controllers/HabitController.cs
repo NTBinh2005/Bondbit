@@ -61,4 +61,12 @@ public class HabitController : ControllerBase
         var result = await _habitService.CheckInAsync(id, User.GetUserId());
         return Ok(result);
     }
+    
+    [HttpGet("{id}/logs")]
+    public async Task<IActionResult> GetLogs(long id, [FromQuery] int days = 30)
+    {
+        var userId = User.GetUserId();
+        var logs = await _habitService.GetLogsAsync(id, userId, days);
+        return Ok(logs);
+    }
 }
