@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HabitSync.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+60a7b116fb884d65f0b0d88aaa81b67ecb182b5a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+891124f75bb8f31258998b86b0a57812f0c4b7f4")]
 [assembly: System.Reflection.AssemblyProductAttribute("HabitSync.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HabitSync.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -48,7 +48,7 @@ public class PartnershipService : IPartnershipService
     public async Task<PartnershipResponse> AcceptAsync(long partnershipId, long userId)
     {
         var partnership = await _db.Partnerships
-            .FirstOrDefaultAsync(p => p.Id == partnershipId && p.RequesterId == userId)
+            .FirstOrDefaultAsync(p => p.Id == partnershipId && p.ReceiverId == userId)
             ??  throw new Exception("Partnership not found");
         
         if (partnership.Status != "pending")
@@ -58,7 +58,7 @@ public class PartnershipService : IPartnershipService
         
         // Tạo Conversation — trigger trong DB cũng làm điều này,
         // nhưng làm thêm ở đây để chắc chắn và trả về ngay
-        var conversation = new Conversation {PartnershipId = partnership.Id};
+        var conversation = new Conversation {PartnershipId = partnership.Id, CreatedAt = DateTime.UtcNow};
         _db.Conversations.Add(conversation);
         
         await _db.SaveChangesAsync();
@@ -68,7 +68,7 @@ public class PartnershipService : IPartnershipService
     public async Task<PartnershipResponse> RejectAsync(long partnershipId, long userId)
     {
         var partnership = await  _db.Partnerships
-            .FirstOrDefaultAsync(p => p.Id == partnershipId && p.RequesterId == userId)
+            .FirstOrDefaultAsync(p => p.Id == partnershipId && p.ReceiverId == userId)
             ??  throw new Exception("Partnership not found");
         
         partnership.Status = "rejected";

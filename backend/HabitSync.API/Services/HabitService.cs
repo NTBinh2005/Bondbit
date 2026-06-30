@@ -8,7 +8,13 @@ namespace HabitSync.API.Services;
 public class HabitService : IHabitService
 {
     private readonly AppDbContext _db;
-    public HabitService(AppDbContext db) => _db = db;
+    private readonly INotificationService _notificationService;
+
+    public HabitService(AppDbContext db, INotificationService notificationService)
+    {
+        _db = db;
+        _notificationService = notificationService;
+    }
     
     public async Task<List<HabitResponse>> GetAllAsync(long userId)
     {
@@ -101,6 +107,8 @@ public class HabitService : IHabitService
         };
         _db.HabitLogs.Add(log);
         await _db.SaveChangesAsync();
+        
+        await _notificationService.SendPartnerCheckInNotificationAsync(habitId, userId);
         
         var (newStreak, _)  = await CalculateSteakAsync(habit.Id, habit.UserId);
         return new CheckInResponse(log.Id, today, newStreak);

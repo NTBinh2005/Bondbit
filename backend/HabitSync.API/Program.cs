@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Database
@@ -41,11 +43,25 @@ builder.Services.AddHangfire(config =>
     config.UsePostgreSqlStorage(
         builder.Configuration.GetConnectionString("Default")));
 builder.Services.AddHangfireServer();
+// HttpClient cho Expo Push API
+builder.Services.AddHttpClient("expo", client =>
+{
+    client.BaseAddress = new Uri("https://exp.host");
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
 
 builder.Services.AddScoped<IPartnershipService, PartnershipService>();
 builder.Services.AddScoped<IUserService, UserService>();
+
 builder.Services.AddSignalR();
+builder.Services.AddSignalR(options =>
+{
+    options.EnableDetailedErrors = true;
+});
+
 builder.Services.AddScoped<IChatService, ChatService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IStatsService, StatsService>();
 
 builder.Services.AddControllers();
 
@@ -66,6 +82,12 @@ RecurringJob.AddOrUpdate<IPartnershipService>(
     "evaluate-shared-streaks",
     service => service.EvaluateSharedStreaksAsync(),
     "59 23 * * *"
+);
+// Thêm Hangfire job nhắc nhở lúc 21:00 mỗi ngày
+RecurringJob.AddOrUpdate<INotificationService>(
+    "daily-reminder",
+    service => service.SendDailyReminderAsync(),
+    "0 21 * * *" // Cron: phút 0, giờ 21, mỗi ngày
 );
 
 
